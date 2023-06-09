@@ -1,0 +1,552 @@
+<!DOCTYPE html Cache-control: no-cache>
+<html>
+    <head>
+        <style>
+            body {
+                height: 100vh;
+                width: 100vw;
+                margin: 0px;
+                background-color: black;
+              }
+              
+              .rubik-font {
+                font-family: "Rubik", sans-serif;
+              }
+
+              main {
+                background-image: url("static/photos/img/cam1.jpg");
+                background-position: center 0%;
+                background-size: cover;
+                height: 100vh;
+                width: 100vw;
+                position: relative;
+                z-index: 3;
+                transition: transform 500ms cubic-bezier(.13,.53,.38,.97);
+                font-size: 0;
+              }
+
+              #background {
+                height: 100vh;
+                width: 100vw;
+                position: relative;
+                z-index: 2;
+                transition: transform 500ms cubic-bezier(.13,.53,.38,.97);
+                font-size: 0;
+                overflow: hidden;
+                display: none;
+              }
+              
+              body[data-nav="true"] > main {
+                transform: translateY(-50%);
+              }
+
+              body[data-nav="true"] > #background {
+                transform: translateY(-50%);
+              }
+              
+              nav {
+                height: 50vh;
+                width: 100%;
+                position: absolute;
+                left: 0px;
+                bottom: 0px;
+                z-index: 1;
+                overflow: hidden;
+              }
+              
+              #nav-links {  
+                display: flex;
+                gap: clamp(1rem, 2vw, 2rem);
+                margin-top: clamp(2rem, 2vw, 3rem);
+                padding: 0rem clamp(1rem, 2vw, 2rem);
+                transform: translateY(70%) scale(0.9);
+                transition: transform 500ms cubic-bezier(.13,.53,.38,.97);
+              }
+              
+              body[data-nav="true"] > nav > #nav-links {
+                transform: translateY(0%) scale(1);
+              }
+              
+              #nav-links > .nav-link {
+                text-decoration: none;
+                width: max(20vw, 400px);
+              }
+              
+              #nav-links > .nav-link > .nav-link-label {
+                color: white;
+                font-size: 1.25rem;
+                margin: 0rem;
+                text-transform: uppercase;
+              }
+              
+              .nav-link-image {
+                height: 40vh;
+              }
+
+              #nav-links > .nav-link > .nav-link-image {
+                width: max(20vw, 400px);
+                aspect-ratio: 1.8 / 1;
+                border-radius: 0.5rem;
+                margin-top: 0.75rem;
+                object-fit: cover;
+              }
+              
+              #nav-toggle {
+                height: 5rem;
+                width: 5rem;
+                position: fixed;
+                z-index: 4;
+                left: 50%;
+                bottom: 3rem;
+                transform: translateX(-50%);
+                background-color: rgb(182, 142, 113);
+                border: none;
+                border-radius: 5rem;
+                outline: none;
+                box-shadow: 0rem 0rem 4rem rgba(0 0 0 / 35%);
+                cursor: pointer;
+                transition: transform, background-color;
+                transition-timing-function: ease;
+                transition-duration: 400ms;
+              }
+              
+              #nav-toggle:hover {
+                transform: translateX(-50%) scale(1.04);
+              }
+              
+              #nav-toggle:active {
+                transform: translateX(-50%) scale(0.96);
+              }
+              
+              body[data-nav="true"] > #nav-toggle {
+                background-color: rgb(85, 130, 149);
+              }
+              
+              body:not([data-nav="true"]) > #nav-toggle:hover > .open {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+              }
+              
+              #nav-toggle > i {
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(0.9);
+                color: rgb(246, 231, 224);
+                font-size: 1.75rem;
+                opacity: 0;
+                transition: transform, opacity;
+                transition-timing-function: ease;
+                transition-duration: 400ms;
+              }
+              
+              body[data-nav="true"] > #nav-toggle > .close {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+              }
+              
+              
+              #source-link {
+                top: 60px;
+              }
+              
+              #source-link > i {
+                color: rgb(94, 106, 210);
+              }
+              
+              #mode {  
+                top: 10px;
+                cursor: pointer;  
+              }
+              
+
+              #angle {
+                top: 60px;
+              }
+
+              #time {
+                top: 130px;
+              }
+            
+              .mover {
+                fill: #fff;
+                height: 40px;
+                width: auto;
+                transition: fill 350ms;
+                cursor: pointer;
+              }
+              
+
+              .mover:hover {
+                fill: #607a90;
+              }
+
+              .right {
+                color: #fff;
+
+              }
+
+              .left {
+                color: #fff;
+              }
+              
+              #validate_manual {
+                top: 130px;
+                height: 40px;
+              }
+
+              #validate_auto {
+                top: 200px;
+                height: 40px;
+              }
+
+              .meta-link {
+                align-items: center;
+                backdrop-filter: blur(3px);
+                background-color: rgba(40, 40, 40, 0.9);
+                border-radius: 6px;
+                box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.1);
+                
+                display: inline-flex;
+                gap: 5px;
+                left: 10px;
+                padding: 10px 20px;
+                position: fixed;
+                text-decoration: none;
+                transition: background-color 350ms, border-color 350ms, fill 350ms;
+                z-index: 10000;
+                user-select: none;
+              }
+
+              .hoverable {
+                cursor: pointer;
+              }
+              .hoverable:hover {
+                background-color: rgb(40, 40, 40);
+              }
+              
+              .valid {
+                height: 40px;
+                width: auto;
+                fill: #fff;
+              }
+              
+              
+              
+              .meta-link > i, .meta-link > span {
+                height: 20px;
+                line-height: 20px;
+              }
+              
+              .meta-link > span {
+                color: white;
+                font-family: "Rubik", sans-serif;
+                transition: color 600ms;
+              }
+
+              .hidden {
+                display:none;
+              }
+        </style>
+
+        
+    </head>
+
+    <body>
+        <main id="back"></main>
+        <div class="hidden" id="cam">{{ cam }}</div>
+        <img id="background" src="static/photos/cam1.jpg">
+
+<nav id="test">
+  <div id="nav-links">
+    {% for i in range(len+1) %}
+    <a class="nav-link" href="#{{ photos[i] }}">
+      <h2 class="nav-link-label rubik-font" id="image_{{ i }}">{{ photos[i] }}</h2>
+      <img class="nav-link-image" src="{{ photos[i] }}"/>
+    </a>
+    {% endfor %}
+  </div>
+</nav>
+
+<button id="nav-toggle" type="button" onclick="toggleNav()">
+  <i class="open fa-light fa-bars-staggered"></i>
+  <i class="close fa-light fa-xmark-large"></i>
+</button>
+
+<a id="mode" class="meta-link hoverable"><span>Manuel</span></a>
+<a id="angle" class="meta-link manual">
+    <svg class="mover left" id="ma" viewBox="0 0 448 512" width="100" title="angle-double-left">
+        <path d="M223.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L319.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L393.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34zm-192 34l136 136c9.4 9.4 24.6 9.4 33.9 0l22.6-22.6c9.4-9.4 9.4-24.6 0-33.9L127.9 256l96.4-96.4c9.4-9.4 9.4-24.6 0-33.9L201.7 103c-9.4-9.4-24.6-9.4-33.9 0l-136 136c-9.5 9.4-9.5 24.6-.1 34z" />
+      </svg>
+    <svg class="mover left" id="la" viewBox="0 0 256 512" width="100" title="angle-left">
+        <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" />
+      </svg>
+    <span id="a">28°</span>
+    <svg class="mover right" id="ra" viewBox="0 0 256 512" width="100" title="angle-right">
+        <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" />
+      </svg>
+      <svg class="mover right" id="ta" viewBox="0 0 448 512" width="100" title="angle-double-right">
+        <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34zm192-34l-136-136c-9.4-9.4-24.6-9.4-33.9 0l-22.6 22.6c-9.4 9.4-9.4 24.6 0 33.9l96.4 96.4-96.4 96.4c-9.4 9.4-9.4 24.6 0 33.9l22.6 22.6c9.4 9.4 24.6 9.4 33.9 0l136-136c9.4-9.2 9.4-24.4 0-33.8z" />
+      </svg>
+</a>
+
+<a id="angle" class="meta-link automatic">
+    <svg class="mover left" id="la1" viewBox="0 0 256 512" width="100" title="angle-left">
+        <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" />
+      </svg>
+    <span id="a1">28°</span>
+    <svg class="mover right" id="ra1" viewBox="0 0 256 512" width="100" title="angle-right">
+        <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" />
+      </svg>
+      <svg class="mover left" id="la2" viewBox="0 0 256 512" width="100" title="angle-left">
+        <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" />
+      </svg>
+    <span id="a2">120°</span>
+    <svg class="mover right" id="ra2" viewBox="0 0 256 512" width="100" title="angle-right">
+        <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" />
+      </svg>
+</a>
+
+<a id="time" class="meta-link automatic">  
+    <svg class="mover left" id="la3" viewBox="0 0 256 512" width="100" title="angle-left">
+        <path d="M31.7 239l136-136c9.4-9.4 24.6-9.4 33.9 0l22.6 22.6c9.4 9.4 9.4 24.6 0 33.9L127.9 256l96.4 96.4c9.4 9.4 9.4 24.6 0 33.9L201.7 409c-9.4 9.4-24.6 9.4-33.9 0l-136-136c-9.5-9.4-9.5-24.6-.1-34z" />
+      </svg>
+    <span id="a3">12s</span>
+    <svg class="mover right" id="ra3" viewBox="0 0 256 512" width="100" title="angle-right">
+        <path d="M224.3 273l-136 136c-9.4 9.4-24.6 9.4-33.9 0l-22.6-22.6c-9.4-9.4-9.4-24.6 0-33.9l96.4-96.4-96.4-96.4c-9.4-9.4-9.4-24.6 0-33.9L54.3 103c9.4-9.4 24.6-9.4 33.9 0l136 136c9.5 9.4 9.5 24.6.1 34z" />
+      </svg>
+</a>
+
+<a id="validate_manual" class="meta-link hoverable manual">
+    <svg class="valid" viewBox="0 0 512 512" width="100" title="check">
+        <path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z" />
+      </svg>
+      <span>Appliquer</span>
+</a>
+
+<a id="validate_auto" class="meta-link hoverable automatic">
+    <svg class="valid" viewBox="0 0 512 512" width="100" title="check">
+        <path d="M173.898 439.404l-166.4-166.4c-9.997-9.997-9.997-26.206 0-36.204l36.203-36.204c9.997-9.998 26.207-9.998 36.204 0L192 312.69 432.095 72.596c9.997-9.997 26.207-9.997 36.204 0l36.203 36.204c9.997 9.997 9.997 26.206 0 36.204l-294.4 294.401c-9.998 9.997-26.207 9.997-36.204-.001z" />
+      </svg>
+      <span>Appliquer</span>
+</a>
+
+
+<div>
+  {% for i in range(len) %}
+  <div class="hidden" id="config_{{ i }}">{{configs[i]}}</div>
+  {% endfor %}
+</div>
+
+
+
+<script>
+    const toggleNav = () => {
+        document.body.dataset.nav = document.body.dataset.nav === "true" ? "false" : "true";
+      }
+    var item = document.getElementById("test");
+
+    window.addEventListener("wheel", function (e) {
+        if (e.deltaY > 0) item.scrollLeft += 100;
+        else item.scrollLeft -= 100;
+    });
+    let imgs = Array.from(document.getElementsByClassName("nav-link"));
+    imgs.forEach((img) => {
+        img.addEventListener("click", function (e) {
+            console.log(img.firstElementChild.getAttribute("id").substring(6));
+            selectCam(Number(img.firstElementChild.getAttribute("id").substring(6)));
+        });
+    });
+
+    function selectCam(cam) {
+      selectImage(document.getElementById("image_" + cam.toString()).innerHTML);
+      let c = document.getElementById("cam");
+      c.innerHTML = cam;
+
+
+      if(getActive(cam) == 0) {
+        let config = getConfig(cam,"manuel");
+        let a = document.getElementById("a");
+        a.innerHTML = config.toString() + "°";
+        setAutomatics(false);
+        setManuals(true);
+      } else {
+        let config = getConfig(cam,"automatique");
+        let a1 = document.getElementById("a1")
+        let a2 = document.getElementById("a2")
+        let a3 = document.getElementById("a3")
+        a1.innerHTML = config.split(":")[0] + "°"
+        a2.innerHTML = config.split(":")[1] + "°"
+        a3.innerHTML = config.split(":")[2] + "s"
+        setAutomatics(true);
+        setManuals(false);
+      }
+      
+    }
+
+    function selectImage(image) {
+        let main = document.getElementById("back");
+        main.innerHTML = image;
+    }
+
+    function getImage() {
+      return document.getElementById("back").innerHTML;
+    }
+    let mode_btn = document.getElementById("mode");
+    mode_btn.addEventListener("click", toggleMode);
+
+
+    function toggleMode() {
+        let mode_btn = document.getElementById("mode");
+        
+        
+        if(mode_btn.firstChild.innerHTML == "Automatique") {
+            setAutomatics(false);
+            setManuals(true);
+        } else {
+            setManuals(false);
+            setAutomatics(true);
+        }
+
+    }
+
+    function setManuals(value) {
+        let mode_btn = document.getElementById("mode");
+        if(value) mode_btn.firstChild.innerHTML = "Manuel";
+
+        manuals = Array.from(document.getElementsByClassName("manual"));
+        manuals.forEach(m => {
+            m.style.display = value ? "inline-flex" : "none";
+        });
+
+    }
+
+    function setAutomatics(value) {
+        let mode_btn = document.getElementById("mode");
+        if(value) mode_btn.firstChild.innerHTML = "Automatique";
+
+        automatics = Array.from(document.getElementsByClassName("automatic"));
+        automatics.forEach(a => {
+            a.style.display = value ? "inline-flex" : "none";
+        });
+    }
+
+
+    movers = Array.from(document.getElementsByClassName("mover"));
+    movers.forEach(m => {
+        m.addEventListener("click", () => {
+            
+            let add = 1;
+            if(m.id[0] == 'l') {
+                add = -1;
+            }
+            if(m.id[0] == 't') {
+                add = 10;
+            }
+            if(m.id[0] == 'm') {
+                add = -10;
+            }
+            let text = document.getElementById(m.id.substring(1)).innerHTML;
+            let unit = text.slice(-1);
+            let number = Number(text.slice(0, -1)) + add;
+            if(number < 0) number = 0;
+            if(number > 180) number = 180;
+
+            document.getElementById(m.id.substring(1)).innerHTML = (number).toString() + unit;
+        })
+    });
+
+    let validate_manual = document.getElementById("validate_manual");
+    let validate_auto = document.getElementById("validate_auto");
+
+    validate_manual.addEventListener("click", validateManual);
+    validate_auto.addEventListener("click", validateAuto);
+
+    function validateManual() { //Opération catapulte
+      let actual = document.getElementById("a").innerHTML.slice(0,-1);
+      let loc = "/manuel?amount=" + actual + "&cam=" + document.getElementById("cam").innerHTML
+      console.log(loc)
+      location.href = loc
+    }
+
+    function validateAuto() {
+        let min = document.getElementById("a1").innerHTML.slice(0,-1);
+        let max = document.getElementById("a2").innerHTML.slice(0,-1);
+        let tmp = document.getElementById("a3").innerHTML.slice(0,-1);
+        let actual = min + ":" + max + ":" + tmp;
+        let loc = "/automatique?info=" + actual + "&cam=" + document.getElementById("cam").innerHTML
+        console.log(loc)
+        location.href = loc 
+    }
+ 
+    async function reload() {
+      let path = getImage();
+      let b = document.getElementById("back");
+      b.style.backgroundImage = "url('" + path + "?t=" + new Date().getTime() + "')";
+      
+    }
+
+    function getImages() {
+      let paths = new Array;
+      imgs.forEach(img => {
+        paths.push(img.lastElementChild.getAttribute("src"));
+      });
+      return paths;
+    }
+    
+    
+  function getActive(cam) {
+      let raw_config = document.getElementById("config_" + cam.toString()).innerHTML;
+      let config = JSON.parse(raw_config);
+      return config["active"];
+    }
+
+    function getConfig(cam,mode) {
+      let raw_config = document.getElementById("config_" + cam.toString()).innerHTML;
+      let config = JSON.parse(raw_config);
+      switch(mode) {
+        case "active":
+          if(config["active"] == 0) {
+            return config["manuel"];
+          } else {
+            return config["automatique"];
+          }
+          break;
+        case "manuel":
+          return config["manuel"];
+        case "automatique":
+          return config["automatique"];
+      }
+
+    }
+
+
+    let images = getImages();
+
+    selectCam(Number(document.getElementById("cam").innerHTML));
+    
+    setInterval(reload, 1500);
+
+
+    
+
+    
+
+
+/*
+    function reloadImages() {
+        let imgs = Array.from(document.getElementsByClassName("nav-link"));
+        imgs.forEach((img) => {
+            img.addEventListener("click", function (e) {
+                img.lastElementChild.getAttribute("src") = img.lastElementChild.getAttribute("src") + "?" + new Date().getTime();
+            });
+    });
+    }
+
+    var intervalID = window.setInterval(reloadImages, 4000);
+*/
+   
+</script>
+
+    </body>
+</html>
