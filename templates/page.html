@@ -247,9 +247,7 @@
               .hidden {
                 display:none;
               }
-        </style>
-
-        
+        </style>        
     </head>
 
     <body>
@@ -358,6 +356,10 @@
         });
     });
 
+    /**
+     * Cette fonction selectionne la caméra, change l'image affichée et actualise la configuration
+     * 
+     */
     function selectCam(cam) {
       selectImage(document.getElementById("image_" + cam.toString()).innerHTML);
       let c = document.getElementById("cam");
@@ -384,18 +386,29 @@
       
     }
 
+    /**
+     * Affiche image
+     * 
+     */
     function selectImage(image) {
         let main = document.getElementById("back");
         main.innerHTML = image;
     }
 
+
+    /**
+     * Renvoie l'image affichée
+     * 
+     */
     function getImage() {
       return document.getElementById("back").innerHTML;
     }
     let mode_btn = document.getElementById("mode");
     mode_btn.addEventListener("click", toggleMode);
 
-
+    /**
+     * Alterne le mode de fonctionnement de la caméra
+     */ 
     function toggleMode() {
         let mode_btn = document.getElementById("mode");
         
@@ -410,6 +423,9 @@
 
     }
 
+    /**
+     * Affiche ou cache les boutons pour modifer la configuration manuelle
+     */
     function setManuals(value) {
         let mode_btn = document.getElementById("mode");
         if(value) mode_btn.firstChild.innerHTML = "Manuel";
@@ -421,6 +437,9 @@
 
     }
 
+    /**
+     * Affiche ou cache les boutons pour modifier la configuration automatique
+     */
     function setAutomatics(value) {
         let mode_btn = document.getElementById("mode");
         if(value) mode_btn.firstChild.innerHTML = "Automatique";
@@ -462,6 +481,13 @@
     validate_manual.addEventListener("click", validateManual);
     validate_auto.addEventListener("click", validateAuto);
 
+    /**
+     * Envoie les données de modification de la configuration manuelle au python
+     * 
+     * à retrouver dans le python avec :
+     * #indice CatapulteManuelle
+     * 
+     */
     function validateManual() { //Opération catapulte
       let actual = document.getElementById("a").innerHTML.slice(0,-1);
       let loc = "/manuel?amount=" + actual + "&cam=" + document.getElementById("cam").innerHTML
@@ -469,6 +495,13 @@
       location.href = loc
     }
 
+    /**
+     * Envoie les données de modification de la configuration manuelle au python
+     * 
+     * à retrouver dans le python avec :
+     * #indice CatapulteAutomatique
+     * 
+     */
     function validateAuto() {
         let min = document.getElementById("a1").innerHTML.slice(0,-1);
         let max = document.getElementById("a2").innerHTML.slice(0,-1);
@@ -479,6 +512,10 @@
         location.href = loc 
     }
  
+    /**
+     * Actualise l'image affichée
+     * 
+     */
     async function reload() {
       let path = getImage();
       let b = document.getElementById("back");
@@ -486,6 +523,10 @@
       
     }
 
+    /**
+     * Renvoie les images données par le python
+     * 
+     */
     function getImages() {
       let paths = new Array;
       imgs.forEach(img => {
@@ -494,13 +535,18 @@
       return paths;
     }
     
-    
+  /**
+   * Renvoie la configuration active de cam
+   */
   function getActive(cam) {
       let raw_config = document.getElementById("config_" + cam.toString()).innerHTML;
       let config = JSON.parse(raw_config);
       return config["active"];
     }
 
+    /**
+     * Renvoie le mode spécifique de cam
+     */
     function getConfig(cam,mode) {
       let raw_config = document.getElementById("config_" + cam.toString()).innerHTML;
       let config = JSON.parse(raw_config);
