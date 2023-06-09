@@ -1,11 +1,22 @@
+"""
+Import des fonctions
+os : pour lire/écrire dans les fichiers
+config : notre fichier pour piloter le moteur
+flask : qui permet le fonctionnement de la page web
+"""
 import os
 from config import *
 from flask import Flask, render_template, redirect, request
 
+# Défini app comme étant un objet de Flask, ici la page web
 app = Flask(__name__)
 
+# Défini que la fonction en-dessous sera lancée lors d'une connexion à la page web à "/" (=racine =première page ouverte)
 @app.route("/", methods=['POST', 'GET'])
 def index():
+    """
+    Envoie certaines infomations dans la page web (comme les caméras utilisées, les photos ou les configurations)
+    """
     cam = 0
     try:
         if request.method == 'GET':
@@ -19,6 +30,9 @@ def index():
 
 @app.route("/manuel", methods=['POST', 'GET'])
 def manuel():
+    """
+    Modifie le fichier de configuration avec les paramètres associés si l'on applique le mode manuel au moteur
+    """
     if request.method == 'GET':
         amount = int(request.args.get('amount'))
         cam = int(request.args.get('cam'))
@@ -30,6 +44,9 @@ def manuel():
 
 @app.route("/automatique", methods=['POST', 'GET'])
 def automatique():
+    """
+    Modifie le fichier de configuration avec les paramètres associés si l'on applique le mode automatique au moteur
+    """
     if request.method == 'GET':
         info = request.args.get('info')
         cam = int(request.args.get('cam'))
@@ -42,6 +59,9 @@ def automatique():
 
 
 def getFiles():
+    """
+    Récupère l'emplacement de toutes les images des caméras
+    """
     distant_pictures = os.listdir("/home/pi/server/static/photos/img")
     local_pictures = os.listdir("/home/pi/server/static")
     files_list = []
